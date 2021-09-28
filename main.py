@@ -1,5 +1,6 @@
-# Maybe do a city object with an ID and an array that has the distances to every other city?
-# Need to read in the file and put it in an adjacency matrix
+# Need to do functions for calculating total distance (fitness) and also doing crossover
+# Need to set up so there's multiple permutations and generations
+# Need selection too?
 from Functions import *
 from CityObject import City
 cityArray = []
