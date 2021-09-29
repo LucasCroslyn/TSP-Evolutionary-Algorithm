@@ -23,8 +23,10 @@ def fitnessFunction(distancesArray, cityArray):
     return fitness
 
 
-def swap(cityArray, int1, int2):
-    cityArray[int1], cityArray[int2] = cityArray[int2], cityArray[int1]
+def swap(cityArray):
+    indexes = random.sample(range(0, len(cityArray)), 2)
+    cityArray[indexes[0]], cityArray[indexes[1]] = cityArray[indexes[1]], cityArray[indexes[0]]
+    return cityArray
 
 
 def crossover(cityArray1, cityArray2):
@@ -32,7 +34,7 @@ def crossover(cityArray1, cityArray2):
     cityArrayChildren = [cityArray1[min(indexes):max(indexes)].tolist(), cityArray2[min(indexes):max(indexes)].tolist()]
     array1CurIndex = max(indexes)
     array2CurIndex = max(indexes)
-    print(cityArrayChildren)
+    #print(cityArrayChildren)
     while len(cityArrayChildren[0]) != len(cityArray1):
         if cityArray2[array2CurIndex] not in cityArrayChildren[0]:
             cityArrayChildren[0].append(cityArray2[array2CurIndex])
@@ -44,18 +46,62 @@ def crossover(cityArray1, cityArray2):
             array1CurIndex = 0
         if array2CurIndex == len(cityArray1):
             array2CurIndex = 0
-        print(cityArrayChildren)
+       # print(cityArrayChildren)
     return cityArrayChildren
 
 # Maybe pass in the populations's fitness first instead of calculating the choices' fitnesses
-def selection(selectionSize, population, distances):
-    choices = random.sample(population, selectionSize)
+#def selection(selectionSize, population, distances):
+#   choices = random.sample(population, selectionSize)
+#    #print(choices)
+#   fitnessArray = []
+#    for i in range(selectionSize):
+#        fitnessArray.append(fitnessFunction(distances, choices[i]))
+#        #print(fitnessArray)
+#    return choices[fitnessArray.index(min(fitnessArray))]
+
+def selection(selectionSize, population, fitnessArray):
+    choices = random.sample(range(0, len(population)), selectionSize)
+    #print(choices)
     print(choices)
+    print(fitnessArray)
+    print(fitnessArray[choices[0]])
+    bestFitness = fitnessArray[choices[0]]
+    for i in choices:
+        if fitnessArray[i] < bestFitness:
+            bestFitness = fitnessArray[i]
+    return population[fitnessArray.index(bestFitness)]
+
+
+def generation(mutRate, crossRate, selectionSize, popSize, population, distances):
+    nextGen = []
     fitnessArray = []
-    for i in range(selectionSize):
-        fitnessArray.append(fitnessFunction(distances, choices[i]))
+    for i in range(popSize):
+        #print(population[i])
+        fitnessArray.append(fitnessFunction(distances, population[i]))
         print(fitnessArray)
-    return choices[fitnessArray.index(min(fitnessArray))]
+        # print(fitnessArray)
+    while len(nextGen) < popSize:
+        parent1 = selection(selectionSize, population, fitnessArray)
+        parent2 = selection(selectionSize, population, fitnessArray)
+        print(parent1)
+        print(parent2)
+        if random.randint(0, mutRate) < mutRate + 1:
+            print("Mutation")
+            parent1 = swap(parent1)
+            parent2 = swap(parent2)
+            print(parent1)
+            print(parent2)
+        if random.randint(0, crossRate) < crossRate + 1:
+            print("Crossover")
+            newParents = crossover(parent1, parent2)
+            print(newParents)
+            parent1 = newParents[0]
+            parent2 = newParents[1]
+        nextGen.extend([parent1, parent2])
+        print("New parent time")
+    return nextGen
+
+
 
 
 

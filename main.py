@@ -6,9 +6,9 @@ from CityObject import City
 NUMBER_OF_CITIES = 15
 POP_SIZE = 10
 GEN_SIZE = 10
-SELECTION_SIZE = 5
-MUT_CHANCE = 0.8
-CROSS_CHANCE = 0.1
+SELECTION_SIZE = 3
+MUT_CHANCE = 80
+CROSS_CHANCE = 10
 
 
 distancesArray = []
@@ -21,9 +21,13 @@ initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distancesArray, POP_
 #print(popArray[0])
 #print(fitArray)
 #print(selection(SELECTION_SIZE, popArray, distancesArray))
-print(popArray[0])
-print(popArray[1])
+#print(popArray[0])
+#print(popArray[1])
+
 #[cityArray1[min(indexes):max(indexes)].tolist(), cityArray2[min[indexes]:max(indexes)].tolist()]
 #print([popArray[0][0:2].tolist(), popArray[1][0:2].tolist()])
-newPop = crossover(popArray[0], popArray[1])
-print(newPop)
+#newPop = crossover(popArray[0], popArray[1])
+#print(newPop)
+#print(popArray)
+print(generation(MUT_CHANCE, CROSS_CHANCE, SELECTION_SIZE, POP_SIZE, popArray, distancesArray))
+
