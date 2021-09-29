@@ -16,12 +16,13 @@ popArray = []
 fitArray = []
 
 initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distancesArray, POP_SIZE, popArray)
-print(distancesArray)
-print(popArray)
-swap(popArray[0], 0, 1)
-print(popArray[0])
+#print(distancesArray)
+#print(popArray)
+#swap(popArray[0], 0, 1)
+#print(popArray[0])
 for i in range(POP_SIZE):
     fitArray.append(fitnessFunction(distancesArray, popArray[i]))
-print(fitArray)
+#print(fitArray)
 
-
+newPop = crossover(popArray[0], popArray[1])
+print(newPop)
