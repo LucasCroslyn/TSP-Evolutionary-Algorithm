@@ -40,3 +40,13 @@ def crossover(cityArray1, cityArray2):
             array2CurIndex = 0
         print(cityArrayChild)
     return cityArrayChild
+
+
+def selection(selectionSize, population, distances):
+    choices = random.sample(population, selectionSize)
+    print(choices)
+    fitnessArray = []
+    for i in range(selectionSize):
+        fitnessArray.append(fitnessFunction(distances, choices[i]))
+        print(fitnessArray)
+    return choices[fitnessArray.index(min(fitnessArray))]
