@@ -13,16 +13,17 @@ CROSS_CHANCE = 0.1
 
 distancesArray = []
 popArray = []
-fitArray = []
 
 initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distancesArray, POP_SIZE, popArray)
 #print(distancesArray)
 #print(popArray)
 #swap(popArray[0], 0, 1)
 #print(popArray[0])
-for i in range(POP_SIZE):
-    fitArray.append(fitnessFunction(distancesArray, popArray[i]))
 #print(fitArray)
-print(selection(SELECTION_SIZE, popArray, distancesArray))
-#newPop = crossover(popArray[0], popArray[1])
-#print(newPop)
+#print(selection(SELECTION_SIZE, popArray, distancesArray))
+print(popArray[0])
+print(popArray[1])
+#[cityArray1[min(indexes):max(indexes)].tolist(), cityArray2[min[indexes]:max(indexes)].tolist()]
+#print([popArray[0][0:2].tolist(), popArray[1][0:2].tolist()])
+newPop = crossover(popArray[0], popArray[1])
+print(newPop)

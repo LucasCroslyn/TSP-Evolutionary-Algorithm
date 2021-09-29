@@ -29,19 +29,25 @@ def swap(cityArray, int1, int2):
 
 def crossover(cityArray1, cityArray2):
     indexes = random.sample(range(0, len(cityArray1)), 2)
-    cityArrayChild = (cityArray1[min(indexes):max(indexes)])
+    cityArrayChildren = [cityArray1[min(indexes):max(indexes)].tolist(), cityArray2[min(indexes):max(indexes)].tolist()]
+    array1CurIndex = max(indexes)
     array2CurIndex = max(indexes)
-    cityArrayChild = cityArrayChild.tolist()
-    while len(cityArrayChild) != len(cityArray1):
-        if cityArray2[array2CurIndex] not in cityArrayChild:
-            cityArrayChild.append(cityArray2[array2CurIndex])
+    print(cityArrayChildren)
+    while len(cityArrayChildren[0]) != len(cityArray1):
+        if cityArray2[array2CurIndex] not in cityArrayChildren[0]:
+            cityArrayChildren[0].append(cityArray2[array2CurIndex])
+        if cityArray1[array1CurIndex] not in cityArrayChildren[1]:
+            cityArrayChildren[1].append(cityArray1[array1CurIndex])
+        array1CurIndex += 1
         array2CurIndex += 1
+        if array1CurIndex == len(cityArray1):
+            array1CurIndex = 0
         if array2CurIndex == len(cityArray1):
             array2CurIndex = 0
-        print(cityArrayChild)
-    return cityArrayChild
+        print(cityArrayChildren)
+    return cityArrayChildren
 
-
+# Maybe pass in the populations's fitness first instead of calculating the choices' fitnesses
 def selection(selectionSize, population, distances):
     choices = random.sample(population, selectionSize)
     print(choices)
@@ -50,3 +56,6 @@ def selection(selectionSize, population, distances):
         fitnessArray.append(fitnessFunction(distances, choices[i]))
         print(fitnessArray)
     return choices[fitnessArray.index(min(fitnessArray))]
+
+
+
