@@ -2,13 +2,14 @@
 # Need to set up so there's multiple permutations and generations
 # Need selection too?
 from Functions import *
-from CityObject import City
+import matplotlib.pyplot as plt
+
 NUMBER_OF_CITIES = 15
-POP_SIZE = 10
-GEN_SIZE = 10
-SELECTION_SIZE = 3
+POP_SIZE = 100
+GEN_SIZE = 100
+SELECTION_SIZE = 5
 MUT_CHANCE = 80
-CROSS_CHANCE = 10
+CROSS_CHANCE = 15
 
 
 distancesArray = []
@@ -29,5 +30,10 @@ initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distancesArray, POP_
 #newPop = crossover(popArray[0], popArray[1])
 #print(newPop)
 #print(popArray)
-print(generation(MUT_CHANCE, CROSS_CHANCE, SELECTION_SIZE, POP_SIZE, popArray, distancesArray))
-
+avgFitnesses = []
+for i in range(GEN_SIZE):
+    popArray, avgFitness =  generation(MUT_CHANCE, CROSS_CHANCE, SELECTION_SIZE, POP_SIZE, popArray, distancesArray)
+    avgFitnesses.append(avgFitness)
+#print(avgFitnesses)
+#print(statistics.mean(avgFitnesses))
+plt.hist(avgFitnesses)
