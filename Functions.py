@@ -69,6 +69,7 @@ def selection(selectionSize, population, fitnessArray):
     for i in choices:
         if fitnessArray[i] < bestFitness:
             bestFitness = fitnessArray[i]
+    print(bestFitness)
     return population[fitnessArray.index(bestFitness)]
 
 
@@ -88,8 +89,10 @@ def generation(mutRate, crossRate, selectionSize, popSize, population, distances
         if random.randint(0, mutRate) < mutRate + 1:
             print("Mutation")
             parent1 = swap(parent1)
-            parent2 = swap(parent2)
             print(parent1)
+        if random.randint(0, mutRate) < mutRate + 1:
+            print("Mutation")
+            parent2 = swap(parent2)
             print(parent2)
         if random.randint(0, crossRate) < crossRate + 1:
             print("Crossover")
