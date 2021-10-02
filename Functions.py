@@ -1,6 +1,8 @@
 import numpy as np
 import random
 import statistics
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 def initialize(num_cities, data_file, distances_matrix, pop_size, population):
@@ -123,3 +125,31 @@ def generation(mut_rate, cross_rate, selection_size, pop_size, population, dista
     for i in range(pop_size):   # New population's fitness amounts
         newpop_fitness.append(fitnessFunction(distances_matrix, next_population[i]))
     return next_population, statistics.mean(newpop_fitness), min(newpop_fitness), max(newpop_fitness)
+
+
+def draw_graph(path, coordinates):
+    """
+    NOT CURRENTLY WORKING NEED TO IMPORT COORDINATE FILE FIRST
+    :param path:
+    :return:
+    """
+    G = nx.DiGraph()
+    print(path)
+    for i in range(len(path)-1):
+        G.add_node(i, pos = (float(coordinates[i][0]), float(coordinates[i][1])))
+        print(path[i], path[i+1])
+        G.add_edge(path[i], path[i+1])
+    G.add_node(i+1, pos = (float(coordinates[i+1][0]), float(coordinates[i+1][1])))
+    G.add_edge(path[i+1], path[0])
+    pos = ((nx.get_node_attributes(G, 'pos')))
+    nx.draw(G, pos, arrows=True, with_labels=True)
+    plt.show()
+
+
+def read_coordinates(data_file, num_cities):
+    city_data = open(data_file, "r")
+    all_coordinates = []
+    for i in range(num_cities):
+        city_coordinates = city_data.readline()
+        all_coordinates.append(city_coordinates.split())
+    return all_coordinates
