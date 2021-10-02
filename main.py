@@ -12,21 +12,21 @@ SELECTION_SIZE = 50
 MUT_CHANCE = 60
 CROSS_CHANCE = 10
 
-distancesArray = []
-popArray = []
-avgFitnesses = []
-bestFitnesses = []
-maxFitnesses = []
-initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distancesArray, POP_SIZE, popArray)
+distances_matrix = []
+population = []
+avg_fitness_array = []
+best_fitness_array = []
+max_fitness_array = []
+initialize(NUMBER_OF_CITIES, "Sample Cities (Size 15).txt", distances_matrix, POP_SIZE, population)
 for i in range(GEN_SIZE):
-    popArray, avgFitness, bestFitness, maxFitness = generation(MUT_CHANCE, CROSS_CHANCE, SELECTION_SIZE, POP_SIZE, popArray, distancesArray, NUMBER_OF_CITIES)
-    avgFitnesses.append(avgFitness)
-    bestFitnesses.append(bestFitness)
-    maxFitnesses.append(maxFitness)
-print(bestFitnesses)
-#sns.displot(avgFitnesses, kind="kde", bw_adjust=0.25)
-sns.displot(bestFitnesses, kind="kde", bw_adjust=0.25)
-#sns.displot(maxFitnesses, kind="kde", bw_adjust=0.25)
+    population, avg_fitness, best_fitness, max_fitness = generation(MUT_CHANCE, CROSS_CHANCE, SELECTION_SIZE, POP_SIZE, population, distances_matrix, NUMBER_OF_CITIES)
+    avg_fitness_array.append(avg_fitness)
+    best_fitness_array.append(best_fitness)
+    max_fitness_array.append(max_fitness)
+print(best_fitness_array)
+#sns.displot(avg_fitness_array, kind="kde", bw_adjust=0.25)
+sns.displot(best_fitness_array, kind="kde", bw_adjust=0.25)
+#sns.displot(max_fitness_array, kind="kde", bw_adjust=0.25)
 plt.show()
 
 
