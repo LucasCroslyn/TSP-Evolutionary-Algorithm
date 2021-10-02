@@ -1,4 +1,3 @@
-from CityObject import City
 import numpy as np
 import random
 import statistics
@@ -11,6 +10,13 @@ def initialize(numCities, dataFile, distancesArray, popSize, popArray):
         distancesArray.append(distancesPerCity.split())
     for j in range(popSize):
         popArray.append(np.random.permutation(numCities).tolist())
+
+
+def copy(cityArray, numCities):
+    newArray = [0] * numCities
+    for i in range(numCities):
+        newArray[i] = cityArray[i]
+    return newArray
 
 
 def fitnessFunction(distancesArray, cityArray):
@@ -40,33 +46,40 @@ def crossover(cityArray1, cityArray2):
     return cityArrayChild
 
 
-def selection(selectionSize, population, fitnessArray):
-    choices = random.sample(range(0, len(population)), selectionSize)
+def selection(selectionSize, popSize, fitnessArray):
+    choices = random.sample(range(0, popSize), selectionSize)
     bestFitness = fitnessArray[choices[0]]
     for i in choices:
         if fitnessArray[i] < bestFitness:
             bestFitness = fitnessArray[i]
-    return population[fitnessArray.index(bestFitness)]
+    return fitnessArray.index(bestFitness)
 
 
-def generation(mutRate, crossRate, selectionSize, popSize, population, distances):
+def generation(mutRate, crossRate, selectionSize, popSize, population, distances, numCities):
     nextGen = []
     fitnessArray = []
     for i in range(popSize):
         fitnessArray.append(fitnessFunction(distances, population[i]))
+    #Elitism
+    nextGen.append(population[fitnessArray.index(min(fitnessArray))])
     while len(nextGen) < popSize:
-        parent1 = selection(selectionSize, population, fitnessArray)
-        parent2 = selection(selectionSize, population, fitnessArray)
-        if random.randint(0, mutRate) < mutRate + 1:
+        parent1Index = selection(selectionSize, popSize, fitnessArray)
+        parent2Index = selection(selectionSize, popSize, fitnessArray)
+        parent1 = copy(population[parent1Index], numCities)
+        parent2 = copy(population[parent2Index], numCities)
+        if random.randint(0, 100) < mutRate:
             parent1 = swap(parent1)
-        if random.randint(0, mutRate) < mutRate + 1:
+        if random.randint(0, 100) < mutRate:
             parent2 = swap(parent2)
-        if random.randint(0, crossRate) < crossRate + 1:
+        if random.randint(0, 100) < crossRate:
             tempchild1 = crossover(parent1, parent2)
             tempchild2 = crossover(parent2, parent1)
             parent1, parent2 = tempchild1, tempchild2
         nextGen.extend([parent1, parent2])
-    return nextGen, statistics.mean(fitnessArray)
+    newFitnessArray = []
+    for i in range(popSize):
+        newFitnessArray.append(fitnessFunction(distances, nextGen[i]))
+    return nextGen, statistics.mean(newFitnessArray), min(newFitnessArray), max(newFitnessArray)
 
 
 
