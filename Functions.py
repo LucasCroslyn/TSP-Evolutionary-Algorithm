@@ -18,17 +18,25 @@ def open_file_distance_matrix(num_cities, data_file, distances_matrix):
         distances_matrix.append(distancesPerCity.split())
 
 
-def read_coordinates_only(data_file, num_cities):
+def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line):
     """
     :param data_file: Name of file with the coordinates of all cities
     :param num_cities: Number of cities needed
+    :param skip_city_num: Some coordinate files have city number beside coordinates. Boolean if files has it or not
+    :param skip_first_line: Some files may have column headers, boolean if files have a line to skip or not
     :return: Return the coordinates of all cities
     """
     city_data = open(data_file, "r")
     all_coordinates = []
+    if skip_first_line:
+        city_data.readline()
     for i in range(num_cities):
-        city_coordinates = city_data.readline()
-        all_coordinates.append(city_coordinates.split())
+        city_coordinates = city_data.readline().split()
+        print(city_coordinates)
+        if skip_city_num:
+            all_coordinates.append((float(city_coordinates[2]), float(city_coordinates[1])))
+        else:
+            all_coordinates.append((float(city_coordinates[1]), float(city_coordinates[0])))
     return all_coordinates
 
 
@@ -155,11 +163,11 @@ def draw_graph(path, coordinates, ax):
     :return: Shows image of the path being taken between all cities
     Help from https://stackoverflow.com/questions/11804730/networkx-add-node-with-specific-position
     """
-    G = nx.DiGraph()
+    G = nx.Graph()
     for i in range(len(path) - 1):
         G.add_node(i, pos=(float(coordinates[i][0]), float(coordinates[i][1])))
         G.add_edge(path[i], path[i + 1])
     G.add_node(i + 1, pos=(float(coordinates[i + 1][0]), float(coordinates[i + 1][1])))
     G.add_edge(path[i + 1], path[0])
     pos = nx.get_node_attributes(G, 'pos')
-    nx.draw_networkx(G, pos, ax=ax, arrows=True, with_labels=True, node_size=200, font_size=10, arrowsize=8)
+    nx.draw_networkx(G, pos, ax=ax, with_labels=False, node_size=20, font_size=10)
