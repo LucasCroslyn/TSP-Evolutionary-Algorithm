@@ -2,6 +2,7 @@ import numpy as np
 import random
 import statistics
 import networkx as nx
+from scipy.spatial import distance
 import matplotlib.pyplot as plt
 
 
@@ -40,15 +41,25 @@ def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line)
     return all_coordinates
 
 
-def initialize(num_cities, pop_size, population):
+def calculate_distances(coordinates):
+    """
+    :param coordinates: The coordinates of all the cities
+    :return: A distance matrix with distances between each city
+    """
+    return distance.cdist(coordinates, coordinates, 'euclidean')
+
+
+def initialize(num_cities, pop_size):
     """
     :param num_cities: Number of cities to go to
     :param pop_size: Number of permutations in a population
     :param population: The current set of permutations
     :return: Will put random permutations in the population
     """
+    population = []
     for _ in range(pop_size):  # Randomly generate initial population
         population.append(np.random.permutation(num_cities).tolist())
+    return population
 
 
 def copy(path_array, num_cities):
@@ -90,6 +101,18 @@ def swap(path_array):
     return path_array
 
 
+def shuffle(path_array):
+    """
+    :param path_array: Current parent permutation mutation happens on
+    :return: Child after shuffling a sublist of cities
+    """
+    indexes = random.sample(range(0, len(path_array)), 2)
+    shuffled_part = path_array[min(indexes): max(indexes) + 1]
+    random.shuffle(shuffled_part)
+    path_array[min(indexes): max(indexes) + 1] = shuffled_part
+    return path_array
+
+
 def crossover(path_array1, path_array2):
     """
     :param path_array1: First parent where a subset gets put in child
@@ -124,7 +147,7 @@ def selection(selection_size, pop_size, pop_fitness):
     return pop_fitness.index(bestFitness)
 
 
-def generation(mut_rate, cross_rate, selection_size, pop_size, population, distances_matrix, num_cities, pop_fitness):
+def generation(mut_rate, cross_rate, selection_size, pop_size, population, distances_matrix, num_cities, pop_fitness, mutation_type):
     """
     :param mut_rate: Rate for mutation to happen for each parent
     :param cross_rate: Rate for crossover to happen for the parents
@@ -133,33 +156,42 @@ def generation(mut_rate, cross_rate, selection_size, pop_size, population, dista
     :param population: The current population of paths
     :param distances_matrix: Matrix containing distances between each city
     :param num_cities: Number of cities needing to go to
-    :return: Return the next population, new population's mean, min and max fitness and the new population
+    :param pop_fitness: The current fitness of te population
+    :param mutation_type: ID for the mutation type (0 for swap, 1 for shuffle)
+    :return: Return the next population, new population's mean, min and fitness and the new population
     """
     next_population = []
     next_population.append(copy(population[pop_fitness.index(min(pop_fitness))], num_cities))  # Elitism, always get the best path from population
     while len(next_population) < pop_size:
+        # Making sure to make a copy of the parents to put in new generation and for any mutations/crossover
         parent1_index = selection(selection_size, pop_size, pop_fitness)
         parent2_index = selection(selection_size, pop_size, pop_fitness)
         parent1 = copy(population[parent1_index], num_cities)
         parent2 = copy(population[parent2_index], num_cities)
         if random.randint(0, 100) < mut_rate:
-            parent1 = swap(parent1)
+            if mutation_type == 0:
+                parent1 = swap(parent1)
+            else:
+                parent1 = shuffle(parent1)
         if random.randint(0, 100) < mut_rate:
-            parent2 = swap(parent2)
+            if mutation_type == 0:
+                parent2 = swap(parent2)
+            else:
+                parent2 = shuffle(parent2)
         if random.randint(0, 100) < cross_rate:
             tempchild1 = crossover(parent1, parent2)
             tempchild2 = crossover(parent2, parent1)
             parent1, parent2 = tempchild1, tempchild2
         next_population.extend([parent1, parent2])
     newpop_fitness = fitnessFunction(distances_matrix, next_population, num_cities)
-    return next_population, statistics.mean(newpop_fitness), min(newpop_fitness), max(newpop_fitness), newpop_fitness
+    return next_population, statistics.mean(newpop_fitness), min(newpop_fitness), newpop_fitness
 
 
 def draw_graph(path, coordinates, ax):
     """
-    NOT CURRENTLY WORKING NEED TO IMPORT COORDINATE FILE FIRST
     :param path: Current path being taken
     :param coordinates: The coordinates of all cities
+    :param ax: Which axis is the graph going on
     :return: Shows image of the path being taken between all cities
     Help from https://stackoverflow.com/questions/11804730/networkx-add-node-with-specific-position
     """
@@ -170,4 +202,4 @@ def draw_graph(path, coordinates, ax):
     G.add_node(i + 1, pos=(float(coordinates[i + 1][0]), float(coordinates[i + 1][1])))
     G.add_edge(path[i + 1], path[0])
     pos = nx.get_node_attributes(G, 'pos')
-    nx.draw_networkx(G, pos, ax=ax, with_labels=False, node_size=20, font_size=10)
+    nx.draw_networkx(G, pos, ax=ax, with_labels=False, node_size=20)

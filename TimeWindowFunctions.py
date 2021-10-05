@@ -3,7 +3,6 @@ import random
 import statistics
 import networkx as nx
 import matplotlib.pyplot as plt
-from scipy.spatial import distance
 from Functions import *
 
 
@@ -20,8 +19,7 @@ def TW_read_data(data_file, num_cities, skip_first_line):
     return all_coordinates, all_ready_times, all_due_times
 
 
-def calculate_distances(coordinates):
-    return distance.cdist(coordinates, coordinates, 'euclidean')
+
 
 
 def TW_fitnessFunction(distances_matrix, population, num_cities, due_times):
