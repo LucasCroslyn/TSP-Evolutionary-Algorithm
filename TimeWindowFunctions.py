@@ -16,7 +16,7 @@ def TW_read_data(data_file, num_cities, skip_first_line):
         all_coordinates.append((float(individual_city_data[1]), float(individual_city_data[2])))
         all_ready_times.append(float(individual_city_data[3]))
         all_due_times.append(float(individual_city_data[4]))
-    return all_coordinates, all_ready_times, all_due_times
+    return all_coordinates, all_due_times
 
 
 
@@ -34,9 +34,8 @@ def TW_fitnessFunction(distances_matrix, population, num_cities, due_times):
         total_distance += float(distances_matrix[permutation[i + 1]][permutation[0]])  # Go back to starting city
         if total_distance > due_times[0]:
             over_due_time += 1
-        #total_fitnesses.append((0.01*total_distance) + (0.99*over_due_time))
-        total_fitnesses.append(over_due_time)
-    print(min(total_fitnesses))
+        #total_fitnesses.append((0.005*total_distance) + (0.995*over_due_time))
+        total_fitnesses.append(total_distance)
     return total_fitnesses
 
 
@@ -68,4 +67,4 @@ def TW_generation(mut_rate, cross_rate, selection_size, pop_size, population, di
             parent1, parent2 = tempchild1, tempchild2
         next_population.extend([parent1, parent2])
     newpop_fitness = TW_fitnessFunction(distances_matrix, next_population, num_cities, due_times)
-    return next_population, statistics.mean(newpop_fitness), min(newpop_fitness), max(newpop_fitness), newpop_fitness
+    return next_population, min(newpop_fitness), newpop_fitness

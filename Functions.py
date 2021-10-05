@@ -3,11 +3,11 @@ import random
 import statistics
 import networkx as nx
 from scipy.spatial import distance
-import matplotlib.pyplot as plt
 
 
 def open_file_distance_matrix(num_cities, data_file, distances_matrix):
     """
+    Utilized if a file already contains a distance matrix to read in
     :param num_cities: Number of cities to go to
     :param data_file: Name for file containing matrix with distances between cities
     :param distances_matrix: Variable to transport matrix from file
@@ -21,6 +21,7 @@ def open_file_distance_matrix(num_cities, data_file, distances_matrix):
 
 def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line):
     """
+    Utilized to read a file containing the coordinates of nodes
     :param data_file: Name of file with the coordinates of all cities
     :param num_cities: Number of cities needed
     :param skip_city_num: Some coordinate files have city number beside coordinates. Boolean if files has it or not
@@ -33,7 +34,6 @@ def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line)
         city_data.readline()
     for i in range(num_cities):
         city_coordinates = city_data.readline().split()
-        print(city_coordinates)
         if skip_city_num:
             all_coordinates.append((float(city_coordinates[2]), float(city_coordinates[1])))
         else:
@@ -43,6 +43,7 @@ def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line)
 
 def calculate_distances(coordinates):
     """
+    Calculates the distance matrix if the original file only had coordinates
     :param coordinates: The coordinates of all the cities
     :return: A distance matrix with distances between each city
     """
@@ -53,7 +54,6 @@ def initialize(num_cities, pop_size):
     """
     :param num_cities: Number of cities to go to
     :param pop_size: Number of permutations in a population
-    :param population: The current set of permutations
     :return: Will put random permutations in the population
     """
     population = []
@@ -147,7 +147,7 @@ def selection(selection_size, pop_size, pop_fitness):
     return pop_fitness.index(bestFitness)
 
 
-def generation(mut_rate, cross_rate, selection_size, pop_size, population, distances_matrix, num_cities, pop_fitness, mutation_type):
+def generation(mut_rate, cross_rate, selection_size, pop_size, population, distances_matrix, num_cities, pop_fitness, mutation_type, additional_pop):
     """
     :param mut_rate: Rate for mutation to happen for each parent
     :param cross_rate: Rate for crossover to happen for the parents
@@ -158,6 +158,7 @@ def generation(mut_rate, cross_rate, selection_size, pop_size, population, dista
     :param num_cities: Number of cities needing to go to
     :param pop_fitness: The current fitness of te population
     :param mutation_type: ID for the mutation type (0 for swap, 1 for shuffle)
+    :param additional_pop: Boolean for if population can increase as generations go on
     :return: Return the next population, new population's mean, min and fitness and the new population
     """
     next_population = []
@@ -183,12 +184,16 @@ def generation(mut_rate, cross_rate, selection_size, pop_size, population, dista
             tempchild2 = crossover(parent2, parent1)
             parent1, parent2 = tempchild1, tempchild2
         next_population.extend([parent1, parent2])
+    if additional_pop and (random.randint(0, 100) < 1): # 1% chance to increase population by 20 and will generate random permutations to fill those slots
+        pop_size += 20
+        add_population(next_population, num_cities, 20)
     newpop_fitness = fitnessFunction(distances_matrix, next_population, num_cities)
-    return next_population, statistics.mean(newpop_fitness), min(newpop_fitness), newpop_fitness
+    return next_population, min(newpop_fitness), newpop_fitness
 
 
 def draw_graph(path, coordinates, ax):
     """
+    Draws the nodes and all edges connecting them
     :param path: Current path being taken
     :param coordinates: The coordinates of all cities
     :param ax: Which axis is the graph going on
@@ -203,3 +208,15 @@ def draw_graph(path, coordinates, ax):
     G.add_edge(path[i + 1], path[0])
     pos = nx.get_node_attributes(G, 'pos')
     nx.draw_networkx(G, pos, ax=ax, with_labels=False, node_size=20)
+
+
+def add_population(population, num_cities, number_to_add):
+    """
+    Function to increase the population by some amount (will only be used if that ability is enabled)
+    :param population: Current population to add new random permutations to
+    :param num_cities: Current number of cities
+    :param number_to_add: Number of new random permutations to add
+    :return:
+    """
+    for _ in range(number_to_add):  # Randomly generate new permutations
+        population.append(np.random.permutation(num_cities).tolist())
