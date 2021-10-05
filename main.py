@@ -14,7 +14,9 @@ CROSS_CHANCE = 20
 MUT_TYPE = 0    # 0 for swap, 1 for shuffle
 avg_fitness_array, best_fitness_array, best_at_end_swap_31, best_at_end_swap_15, best_at_end_shuffle_31, best_at_end_shuffle_15 = [], [], [], [], [], []
 
-
+# Can also open a file directly containing a distance matrix using open_file_distance_matrix()
+# Don't use calculate_distance() or read_coordinates_only() if doing that
+# Need to stop running draw_graph() in this case due to lack of coordinates
 
 # The boolean at end is for if it needs to skip the first spot of each line or if it needs to skip first line
 coordinates = read_coordinates_only("qa194.tsp", NUMBER_OF_CITIES, True, False)
