@@ -19,8 +19,8 @@ ADDITIONAL_POP = True  # False for no chance of additional population through ge
 # Don't use calculate_distance() or read_coordinates_only() if doing that
 # Need to stop running draw_graph() in this case due to lack of coordinates
 
-# The boolean at end is for if it needs to skip the first spot of each line or if it needs to skip first line
-coordinates = read_coordinates_only("qa194.tsp", NUMBER_OF_CITIES, True, False)
+# The booleans at end is for if it needs to skip the first spot of each line, in this code skip if city num or name is given (first boolean) or if it needs to skip first line (second boolean)
+coordinates = read_coordinates_only("qa194.tsp", NUMBER_OF_CITIES, True, True)
 distances_matrix = calculate_distances(coordinates)
 print("Distance Matrix Done")
 
