@@ -5,46 +5,49 @@ import networkx as nx
 from scipy.spatial import distance
 
 
-def open_file_distance_matrix(num_cities, data_file, distances_matrix):
+def open_file_distance_matrix(data_file: str) -> tuple[list[list[float]], int]:
     """
     Utilized if a file already contains a distance matrix to read in
-    :param num_cities: Number of cities to go to
     :param data_file: Name for file containing matrix with distances between cities
-    :param distances_matrix: Variable to transport matrix from file
-    :return: Don't return anything, just opens file and gets distance matrix
+    :return: Returns distance matrix between all the cities and the number of cities in the file
     """
-    city_data = open(data_file, "r")
-    for i in range(num_cities):
-        distancesPerCity = city_data.readline()
-        distances_matrix.append(distancesPerCity.split())
+    distances_matrix = []
+    num_cities = 0
+    with open(data_file, "r") as city_data:
+        for line in city_data:
+            distances_matrix.append([float(x) for x in line.split()])
+            num_cities += 1
+    return distances_matrix, num_cities
 
 
-def read_coordinates_only(data_file, num_cities, skip_city_num, skip_first_line):
+def read_coordinates_only(data_file: str, skip_city_num: bool, headers: bool) -> tuple[list[tuple], int]:
     """
-    Utilized to read a file containing the coordinates of nodes
-    :param data_file: Name of file with the coordinates of all cities
-    :param num_cities: Number of cities needed
-    :param skip_city_num: Some coordinate files have city number beside coordinates. Boolean if files has it or not
-    :param skip_first_line: Some files may have column headers, boolean if files have a line to skip or not
-    :return: Return the coordinates of all cities
+    Utilized to read a file containing only the coordinates of nodes/cities
+    :param data_file: Name of file with the coordinates
+    :param skip_city_num: Coordinate files may have the city number beside coordinates in the first column. Boolean if files have this or not
+    :param headers: Coordinate files may have column headers. Boolean if files have these headers or not
+    :return: Returns a list of the coordinates for each city (coordinates in a tuple) as well as the number of cities in the file
     """
-    city_data = open(data_file, "r")
     all_coordinates = []
-    if skip_first_line:
-        city_data.readline()
-    for i in range(num_cities):
-        city_coordinates = city_data.readline().split()
-        if skip_city_num:
-            all_coordinates.append((float(city_coordinates[2]), float(city_coordinates[1])))
-        else:
-            all_coordinates.append((float(city_coordinates[1]), float(city_coordinates[0])))
-    return all_coordinates
+    num_cities = 0
+    with open(data_file, "r") as city_data:
+        if headers:
+            next(city_data)
+        
+        for line in city_data:
+            num_cities += 1
+            city_coordinates = [float(coord) for coord in line.split()]
+            if skip_city_num:
+                all_coordinates.append((city_coordinates[2], city_coordinates[1])) # Flips coordinate order
+            else:
+                all_coordinates.append((city_coordinates[1], city_coordinates[0])) # Flips coordinate order
+    return all_coordinates, num_cities
 
 
-def calculate_distances(coordinates):
+def calculate_distances(coordinates: list[tuple]) -> np.ndarray[np.ndarray[np.float64]]:
     """
-    Calculates the distance matrix if the original file only had coordinates
-    :param coordinates: The coordinates of all the cities
+    Calculates the distance matrix given the coordinates of each city
+    :param coordinates: The coordinates of all the cities in a list
     :return: A distance matrix with distances between each city
     """
     return distance.cdist(coordinates, coordinates, 'euclidean')
