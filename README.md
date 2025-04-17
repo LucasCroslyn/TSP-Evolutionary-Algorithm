@@ -2,9 +2,9 @@
 
 This project makes an attempt at the Traveling Salesman Problem with an Evolutionary Algorithm solution
 
-- The main file that shows the algorithm running is in the main.ipynb Jupyter Notebook.
-- The Functions.py file contains various functions that the main file uses. They were separated so that the Jupyter Notebook could be a lot shorter and cleaner (compared to what it would be otherwise)
-- The CityCoordinates folder contains files that have the coordinates for each city (x and y coordinates, or equivalent)
+- The main file that shows the algorithm running is in the [main.ipynb]() Jupyter Notebook.
+- The [Functions.py]() file contains various functions that the main file uses. They were separated so that the Jupyter Notebook could be a lot shorter and cleaner (compared to what it would be otherwise)
+- The [CityCoordinates](CityCoordinates/) folder contains files that have the coordinates for each city (x and y coordinates, or equivalent)
 - The images are displayed below 
 
 ## Paper
